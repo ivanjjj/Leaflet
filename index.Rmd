@@ -1,0 +1,52 @@
+---
+title: "Maps"
+author: "Ivan Jennings"
+date: "12/04/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Summary
+
+Create a map that shows the managed isolation hotels in New Zealand. I am using the miq government website:
+
+https://www.miq.govt.nz/being-in-managed-isolation/isolation-facilities/facility-locations/
+
+First I will load the relevant libraries
+
+```{r, message=FALSE}
+library(ggmap)
+library(dplyr)
+library(leaflet)
+```
+
+## Load Data
+
+I have already copied the names on the miq website and loaded these into a csv file called "MIQ_Hotels"
+
+```{r, cache=TRUE, message=FALSE}
+MIQ_Hotels <- read.csv("MIQ_Hotels.csv") ## load data set
+MIQ_Hotels[20,] <- "Ibis Hamilton, New Zealand" ## change name of this hotel as there is another hotel with the same name elswhere
+MIQ_Hotels_Lat_Lon <- ggmap::geocode(MIQ_Hotels$Hotel_Name) ## get lat/lon data from location
+MIQ_Hotels_Lat_Lon <- cbind(MIQ_Hotels, MIQ_Hotels_Lat_Lon) ## add lat/lon data to the data frame with hotel names
+```
+
+## Create Map
+
+```{r}
+icon <- makeIcon(iconUrl = "https://d29fhpw069ctt2.cloudfront.net/icon/image/73389/preview.svg",
+         iconWidth = 31*218/230, iconHeight = 31,
+         iconAnchorX = 31*215/230/2, iconAnchorY = 16) ## download and create icon based on image from website
+
+m <- leaflet() %>%
+  addTiles() %>%
+  addMarkers(MIQ_Hotels_Lat_Lon$lon, MIQ_Hotels_Lat_Lon$lat, popup=MIQ_Hotels_Lat_Lon$Hotel_Name, clusterOptions = markerClusterOptions(),
+             icon = icon) ## create map with latitude and longitude from the MIQ hotel list
+
+m ## print the map
+```
+
+Above we have the final map
