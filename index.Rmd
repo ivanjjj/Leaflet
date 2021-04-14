@@ -1,5 +1,5 @@
 ---
-title: "Maps"
+title: "New Zealand Map with Managed Isolation Hotels"
 author: "Ivan Jennings"
 date: "12/04/2021"
 output: html_document
